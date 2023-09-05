@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 0;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* Responsive design for tabs */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    flex-wrap: wrap; /* Allow tabs to wrap in smaller screens */
+}
+
+.tab {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    margin: 5px; /* Space between tabs when they wrap */
+}
+
+.tab:hover, .tab.active {
+    background-color: #f7f7f7;
+    color: #333; /* Dark text for better contrast */
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+footer {
+    margin-top: 50px;
+    text-align: center;
+}
