@@ -1,0 +1,16 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+theme = "ananke"
+title = 'Jonitronix'
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 10
+
+[[menu.main]]
+  identifier = "sudoku"
+  name = "Sudoku"
+  url = "/sudoku/"
+  weight = 20
