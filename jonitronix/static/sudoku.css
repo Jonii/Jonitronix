@@ -1,0 +1,75 @@
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    margin: auto;
+  }
+  .number-content {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+  .subgrid {
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    grid-template-rows: repeat(3, min-content);
+    border: 1px solid #222;
+  }
+  
+  .cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dotted #777;
+    background-color: hsl(39, 100%, 83%);
+    box-sizing: border-box;
+  }
+  .cell-border {
+    width: 100%;
+    height: 100%;
+    border: 10px solid transparent;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cell:hover {
+    background-color: #dcc;
+    border-color: #111;
+  }
+  .cell.affected {
+    background-color: #baa;
+  }
+  .cell.selected .number-content {
+    background-color: #cbb;
+  }
+  .cell.selected {
+    border: 2px dashed #222;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
+    text-align: center;
+    border: none;
+  }
+
+.cell.affected .cell-border {
+    border-color: #baa; 
+}
+.number-content {
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
+    text-align: center;
+    border: none;
+}
+.invalid .number-content {
+    color: red;
+}
