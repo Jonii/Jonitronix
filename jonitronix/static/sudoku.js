@@ -1,46 +1,52 @@
 let isPainting = false;
 let isCtrlPressed = false;
 
+document.addEventListener('keydown', function (e) {
+    const selectedCells = document.querySelectorAll('.selected');
+    const inputNum = e.key;
+    if (inputNum >= '1' && inputNum <= '9') {
+        putNumber(parseInt(inputNum));
+    }
+    if (inputNum == 'Backspace') {
+        console.log("Deleting number");
+        if (selectedCells.length == 0) {
+            console.log("No cell selected");
+            return;
+        }
+
+        selectedCells.forEach(function (selectedCell) {
+            selectedCell.querySelector('.number-content.modifiable').textContent = '';
+        });
+        verifyBoard();
+    }
+});
+
+function putNumber(num) {
+    const selectedCells = document.querySelectorAll('.selected');
+    console.log("inputting num " + num);
+    if (selectedCells.length == 0) {
+        console.log("No cell selected");
+        return;
+    }
+    const allCellsHaveInputNumAlready = Array.from(selectedCells).every(function (selectedCell) {
+        const cellValue = selectedCell.querySelector('.number-content').textContent;
+        return cellValue == num;
+    });
+    selectedCells.forEach(function (selectedCell) {
+        if (allCellsHaveInputNumAlready) {
+            selectedCell.querySelector('.number-content.modifiable').textContent = '';
+        }
+        else {
+            selectedCell.querySelector('.number-content.modifiable').textContent = num;
+        }
+    });
+    verifyBoard();
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const board = document.getElementById('board');
     const cellTemplate = document.getElementById('cell-template').content;
-
-    document.addEventListener('keydown', function (e) {
-        const selectedCells = document.querySelectorAll('.selected');
-        const inputNum = e.key;
-        if (inputNum >= '1' && inputNum <= '9') {
-            console.log("inputting num " + inputNum);
-            if (selectedCells.length == 0) {
-                console.log("No cell selected");
-                return;
-            }
-            const allCellsHaveInputNumAlready = Array.from(selectedCells).every(function (selectedCell) {
-                const cellValue = selectedCell.querySelector('.number-content').textContent;
-                return cellValue == inputNum;
-            });
-            selectedCells.forEach(function (selectedCell) {
-                if (allCellsHaveInputNumAlready) {
-                    selectedCell.querySelector('.number-content.modifiable').textContent = '';
-                }
-                else {
-                    selectedCell.querySelector('.number-content.modifiable').textContent = inputNum;
-                }
-            });
-            verifyBoard();
-        }
-        if (inputNum == 'Backspace') {
-            console.log("Deleting number");
-            if (selectedCells.length == 0) {
-                console.log("No cell selected");
-                return;
-            }
-
-            selectedCells.forEach(function (selectedCell) {
-                selectedCell.querySelector('.number-content.modifiable').textContent = '';
-            });
-            verifyBoard();
-        }
-    });
 
     // Create 9 sub-grids
     for (let subgridIndex = 0; subgridIndex < 9; subgridIndex++) {
@@ -85,6 +91,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         board.appendChild(subGrid);
     }
+
+    // Handle number button clicks
+    const numberButtons = document.querySelectorAll('.number');
+    numberButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        console.log('Button clicked:', this.getAttribute('data-number'));
+        putNumber(parseInt(this.getAttribute('data-number')));
+      });
+    });
 });
 
 document.addEventListener('keydown', function (e) {
