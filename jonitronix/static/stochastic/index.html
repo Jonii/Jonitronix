@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stochastic rounding example</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js"></script>
+</head>
+<body>
+    <div>
+        <div>
+            <input type="number" id="mean" value="1300">
+            <label for="mean">Mean</label>
+        </div>
+        <div>
+            <input type="number" id="stdev" value="100">
+            <label for="stddev">Standard deviation</label>
+        </div>
+        <div>
+            <input type="number" id="numberCount" value="365">
+            <label for="numberCount">Number of values</label>
+        </div>
+        <button onclick="updateTable()">Calculate</button>
+    </div>
+    <table id="result-table">
+        <tr>
+            <th>Actual</th>
+            <th>Round</th>
+            <th>Stochastic</th>
+        </tr>
+    </table>
+
+</body>
+</html>
