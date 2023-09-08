@@ -29,4 +29,4 @@ Why is this bad, then? This greedy decision-making could fall victim to making t
 
 A way to combat this greedy thinking is to try randomness. Instead of choosing the singular best decision, some solutions instead assign probability to each decision that they would be the best. And after getting these probabilities, a decision is made by randomly selecting from all options, weighted by this probability estimate.If result from a random action was good, you conclude you should've had higher probability for that decision, and if the result is bad, you go the other way, decreasing the probability.
 
-We often prefer predictable world around us. There is safety in knowing the hardships you will encounter ahead of time. But, at the cost of giving up some of that predictability, there are ways to gain surprising benefits, like much better exploration and learning, and removing bias.
+We often prefer predictable world around us. There is safety in knowing the hardships you will encounter ahead of time. But, at the cost of giving up some of that predictability, there are ways to gain surprising benefits, like much better exploration and learning, and removing some bias.
