@@ -22,13 +22,52 @@ export class SudokuBoard {
      * @param {string} boardstr
      */
     setBoard(boardstr) {
-        const lines = boardstr.split("\n").map((s) => s.trim()).filter((s) => s.length == 17);
+        const lines = boardstr.split("\n").map((s) => s.trim()).filter((s) => s.length > 9);
         console.log(lines);
         if (lines.length != 9) {
             console.log("Bad format");
+            console.log(JSON.stringify(lines));
             return;
         }
-        for (let x = 0; x<9; x++) {
+        for (const [rownum, line] of lines.entries()) {
+            console.log(`Parsing line ${rownum} '${line}'`);
+            const lineSegments = line.split(/\s*[ |]\s*/);
+            if (lineSegments.length !== 9) {
+                console.log("Problem parsing");
+                console.log(JSON.stringify(lineSegments));
+                console.log(line);
+                return;
+            }
+            for (const [colnum, entry] of lineSegments.entries()) {
+                const cell = this.htmlParent.querySelector(`#cell-${colnum}-${rownum}`);
+                const fixedNumPtr = /^#([1-9])$/;
+                const fixedNumMatch = fixedNumPtr.exec(entry);
+                if (fixedNumMatch) {
+                    const content = fixedNumMatch[1];
+                    setCellValue(cell, content);
+                    setCellStatus(cell, {"modifiable": false});
+                    continue;
+                }
+
+                const modifiableNumPtr = /^[1-9]$/;
+                const modifiableNumMatch = modifiableNumPtr.exec(entry);
+                if (modifiableNumMatch) {
+                    const content = entry;
+                    setCellValue(cell, content);
+                    setCellStatus(cell, {"modifiable": true});
+                    continue;
+                }
+
+                if (entry === "_") {
+                    const content = "";
+                    setCellValue(cell, content);
+                    setCellStatus(cell, {"modifiable": true});
+                    continue;
+                }
+
+            }
+        }
+        /**for (let x = 0; x<9; x++) {
             for (let y = 0; y<9; y++) {
                 const char = lines[y].charAt(2*x);
                 if (char === "_") {
@@ -43,6 +82,7 @@ export class SudokuBoard {
                 console.log("Problems on line " + lines[y] + " with char " + char);
             }
         }
+            */
     }
     
 
@@ -56,7 +96,7 @@ export class SudokuBoard {
 
             // Create 9 cells within each sub-grid
             for (let inBoxIndex = 0; inBoxIndex < 9; inBoxIndex++) {
-                const {row: x, column: y} = this.getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex);
+                const {row: y, column: x} = this.getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex);
                 const cell = this.createCellElem(x, y);
                 
 
@@ -130,15 +170,6 @@ export class SudokuBoard {
         }
     }
 
-    setCellLocationBySubgrid(cell, subgridIndex, inBoxIndex) {
-        cell.id = `cell-${subgridIndex}-${inBoxIndex}`;
-        cell.setAttribute('data-subgrid', subgridIndex);
-        cell.setAttribute('data-in-box', inBoxIndex);
-        const { row, column } = getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex);
-        cell.setAttribute('data-row', row);
-        cell.setAttribute('data-column', column);
-    }
-
     getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex) {
         const row = Math.floor(subgridIndex / 3) * 3 + Math.floor(inBoxIndex / 3);
         const column = (subgridIndex % 3) * 3 + (inBoxIndex % 3);
@@ -154,5 +185,25 @@ export class SudokuBoard {
 const setCellValue = (cell, val) => {
     cell.querySelector(".number-content").textContent = val;
 }
+
+const setCellStatus = (cell, statusStruct) => {
+    switch (statusStruct.modifiable) {
+        case true:
+            cell.classList.add("modifiable");
+            cell.classList.remove("unmodifiable");
+            break;
+        case false:
+            cell.classList.add("unmodifiable");
+            cell.classList.remove("modifiable");
+            break;
+        case undefined:
+            break;
+        default:
+            console.log("Error parsing modifiable");
+    }
+
+
+}
+
 
 window.SudokuBoard = SudokuBoard;

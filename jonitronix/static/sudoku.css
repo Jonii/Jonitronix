@@ -95,6 +95,9 @@
     text-align: center;
     border: none;
 }
+.unmodifiable .number-content {
+  color: #444;
+}
 .invalid .number-content {
     color: var(--invalid-text-color);
 }

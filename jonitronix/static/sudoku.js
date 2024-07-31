@@ -2,17 +2,17 @@ import { SudokuBoard } from './SudokuBoard.js';
 
 const sudokuboard = new SudokuBoard();
 sudokuboard.setBoard(`
-  _ _ _|_ _ _|_ _ _
-  _ _ _|_ _ _|_ _ _
-  _ 3 _|_ _ _|_ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ #3 _| _ 2 1 | _ _ _
 
-  _ _ _|_ _ _|_ _ _
-  _ _ _|_ _ _|_ _ _
-  _ _ _|_ _ _|_ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
 
-  _ _ _|_ _ _|_ _ _
-  _ _ _|_ _ _|_ _ _
-  _ _ _|_ _ _|_ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
   `)
 
 document.addEventListener('keydown', function (e) {
