@@ -10,6 +10,14 @@
   box-sizing: border-box;
 }
 
+button {
+  padding: 0.5rem;
+}
+
+#selectMode {
+  width: 9rem;
+}
+
 #sudoku-container {
   display: grid;
   grid-template-columns: auto;
@@ -18,12 +26,13 @@
   max-height: 70%;
   max-width: 70%;
   padding: 1rem 0rem;
+  gap: 1rem;
 }
 
 #board {
     grid-column: 1 / 6;
     grid-row: 1 / 6;
-    height: 100%;
+    height: auto;
     display: grid;
     grid-template: repeat(9, 1fr) / repeat(9, 1fr);
     margin: auto;
@@ -136,11 +145,11 @@
   display: flex;
   grid-column: 6 / 8;
   grid-row: 2 / 5;
+  gap: 0.5rem;
   flex-direction: column;
 }
 #controls .number-container {
   display: grid;
-  gap: 1px;
   aspect-ratio: 1;
   grid-template-columns: repeat(3, 1fr);
 }
