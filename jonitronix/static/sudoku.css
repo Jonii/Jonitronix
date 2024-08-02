@@ -7,6 +7,7 @@
   --affected-bg-color: #baa;
   --selected-bg-color: #cbb;
   --invalid-text-color: red;
+  box-sizing: border-box;
 }
 
 #sudoku-container {
@@ -24,8 +25,9 @@
     grid-row: 1 / 6;
     height: 100%;
     display: grid;
-    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    grid-template: repeat(9, 1fr) / repeat(9, 1fr);
     margin: auto;
+    border: 1px solid #222;
   }
   .number-content, .number {
     -webkit-touch-callout: none;
@@ -35,12 +37,6 @@
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
-  }
-  .subgrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    border: 1px solid #222;
   }
   
   .cell {
@@ -54,6 +50,40 @@
     border: 1px dotted var(--cell-border-color);
     background-color: var(--cell-bg-color);
     box-sizing: border-box;
+    margin-right: -1px;
+    margin-bottom: -1px;
+  }
+  .cell:nth-child(9n) {
+    margin-right: 0;
+  }
+  .cell:nth-child(27n-0),
+  .cell:nth-child(27n-1),
+  .cell:nth-child(27n-2),
+  .cell:nth-child(27n-3),
+  .cell:nth-child(27n-4),
+  .cell:nth-child(27n-5),
+  .cell:nth-child(27n-6),
+  .cell:nth-child(27n-7),
+  .cell:nth-child(27n-8) {
+    border-bottom: 1px solid #222;
+  }
+
+  .cell:nth-child(27n+1),
+  .cell:nth-child(27n+2),
+  .cell:nth-child(27n+3),
+  .cell:nth-child(27n+4),
+  .cell:nth-child(27n+5),
+  .cell:nth-child(27n+6),
+  .cell:nth-child(27n+7),
+  .cell:nth-child(27n+8),
+  .cell:nth-child(27n+9) {
+    border-top: 1px solid #222;
+  }
+  .cell:nth-child(3n) {
+    border-right: 1px solid #222;
+  }
+  .cell:nth-child(3n+1) {
+    border-left: 1px solid #222;
   }
   .cell-border {
     display: flex;

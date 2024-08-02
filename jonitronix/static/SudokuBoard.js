@@ -1,3 +1,9 @@
+// @ts-check
+
+import { SudokuCell } from "./SudokuCell.js";
+
+
+
 export class SudokuBoard {
     htmlParent;
 
@@ -10,10 +16,14 @@ export class SudokuBoard {
     reset() {
         for (let x = 0; x<9; x++) {
             for (let y = 0; y<9; y++) {
-                const cell = this.htmlParent.querySelector(`#cell-${x}-${y}`);
-                cell.classList = "cell modifiable";
-                const numberContent = cell.querySelector(".number-content");
-                numberContent.textContent = "";
+                const cell = this.getCell(x, y);
+                if (cell === null) {
+                    console.log("cells gone awol on the board");
+                    return;
+                }
+                cell.selected = false;
+                cell.modifiable = true;
+                cell.delNumber();
             }
         }
     }
@@ -39,116 +49,97 @@ export class SudokuBoard {
                 return;
             }
             for (const [colnum, entry] of lineSegments.entries()) {
-                const cell = this.htmlParent.querySelector(`#cell-${colnum}-${rownum}`);
+                const cell = this.getCell(colnum, rownum);
+                if (cell === null) {
+                    console.log("cell gone awol");
+                    return;
+                }
                 const fixedNumPtr = /^#([1-9])$/;
                 const fixedNumMatch = fixedNumPtr.exec(entry);
                 if (fixedNumMatch) {
-                    const content = fixedNumMatch[1];
-                    setCellValue(cell, content);
-                    setCellStatus(cell, {"modifiable": false});
+                    const content = Number(fixedNumMatch[1]);
+                    cell.setNumber(content);
+                    cell.modifiable = false;
                     continue;
                 }
 
                 const modifiableNumPtr = /^[1-9]$/;
                 const modifiableNumMatch = modifiableNumPtr.exec(entry);
                 if (modifiableNumMatch) {
-                    const content = entry;
-                    setCellValue(cell, content);
-                    setCellStatus(cell, {"modifiable": true});
+                    const content = Number(entry);
+                    cell.setNumber(content);
+                    cell.modifiable = true;
                     continue;
                 }
 
                 if (entry === "_") {
                     const content = "";
-                    setCellValue(cell, content);
-                    setCellStatus(cell, {"modifiable": true});
+                    cell.delNumber();
+                    cell.modifiable = true;
                     continue;
                 }
 
             }
         }
-        /**for (let x = 0; x<9; x++) {
-            for (let y = 0; y<9; y++) {
-                const char = lines[y].charAt(2*x);
-                if (char === "_") {
-                    continue;
-                }
-                if (char <= "9" && char >= "1") {
-                    const cell = this.htmlParent.querySelector(`#cell-${x}-${y}`);
-                    cell.classList.remove("modifiable");
-                    setCellValue(cell, char);
-                    continue;
-                }
-                console.log("Problems on line " + lines[y] + " with char " + char);
-            }
-        }
-            */
+        
     }
-    
+   
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     * @returns {SudokuCell|null}
+     */
+    getCell(x, y) {
+        const index = x + (y*9);
+        return this.htmlParent.children.item(index);
+    }
 
     createBoardElement() {
         const boardElem = document.createElement("div");
         boardElem.id = "board";
-        // Create 9 sub-grids
-        for (let subgridIndex = 0; subgridIndex < 9; subgridIndex++) {
-            const subGrid = document.createElement('div');
-            subGrid.className = 'subgrid';
 
-            // Create 9 cells within each sub-grid
-            for (let inBoxIndex = 0; inBoxIndex < 9; inBoxIndex++) {
-                const {row: y, column: x} = this.getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex);
-                const cell = this.createCellElem(x, y);
-                
+        // Create 9 cells within each sub-grid
+        for (let i = 0; i<81; i++) {
+            const cell = new SudokuCell();
 
-                // Add click event listener
-                cell.addEventListener('click', this.clickHandler(cell));
+            // Add click event listener
+            cell.addEventListener('click', this.clickHandler(cell));
 
-                subGrid.appendChild(cell);
-            }
-            boardElem.appendChild(subGrid);
+            boardElem.appendChild(cell);
         }
         return boardElem;
     }
 
-    createCellElem(x, y) {
-        const parent = document.createElement("div");
-        parent.classList.add("cell", "modifiable");
-        parent.id = `cell-${x}-${y}`;
-        const border = document.createElement("div");
-        parent.appendChild(border);
-        border.classList.add("cell-border");
-        const numberContent = document.createElement("div");
-        border.appendChild(numberContent);
-        numberContent.classList.add("number-content");
-        return parent;
-
-    }
-
-    enterNumber(num) {
-        const selectedCells = this.htmlParent.querySelectorAll('.modifiable.selected');
+    /**
+     * 
+     * @param {number} num 
+     * @returns 
+     */
+    enterNumberToSelected(num) {
+        const selectedCells = this.htmlParent.querySelectorAll('sudoku-cell.modifiable.selected');
         console.log("inputting num " + num);
         if (selectedCells.length == 0) {
             console.log("No cell selected");
             return;
         }
         const allCellsHaveInputNumAlready = Array.from(selectedCells).every(function (selectedCell) {
-            const cellValue = selectedCell.querySelector('.number-content')?.textContent;
-            return cellValue == num;
+            return selectedCell.number == num;
         });
         selectedCells.forEach((selectedCell) => {
             if (allCellsHaveInputNumAlready) {
-                setCellValue(selectedCell, "");
+                selectedCell.delNumber();
             }
             else {
-                setCellValue(selectedCell, num);
+                selectedCell.setNumber(num)
             }
         });
     }
 
-    deleteNumber() {
+    deleteContentFromSelected() {
         const selectedCells = this.htmlParent.querySelectorAll(".selected.modifiable");
         selectedCells.forEach((cell) => {
-            setCellValue(cell, "");
+            cell.delNumber();
         })
     }
 
@@ -159,6 +150,7 @@ export class SudokuBoard {
         return (event) => {
             if (this.selectMode === "multi") {
                 cell.classList.toggle("selected");
+                this.markAffectedBySelection();
                 return
             }
             for (const selected of this.htmlParent.querySelectorAll(".selected")) {
@@ -167,41 +159,38 @@ export class SudokuBoard {
                 }
             }
             cell.classList.toggle("selected");
+            this.markAffectedBySelection();
         }
     }
-
-    getCellCoordinatesBySubgrid(subgridIndex, inBoxIndex) {
-        const row = Math.floor(subgridIndex / 3) * 3 + Math.floor(inBoxIndex / 3);
-        const column = (subgridIndex % 3) * 3 + (inBoxIndex % 3);
-        return { row, column };
+    markAffectedBySelection() {
+        const allCells = this.htmlParent.querySelectorAll("sudoku-cell");
+        for (const cell of allCells) {
+            cell.affected = false;
+        }
+        let stillAffected = Array.from(allCells);
+        let anySelected = false;
+        for (let x = 0; x<9; x++) {
+            for (let y = 0; y<9; y++) {
+                if (!this.getCell(x, y)?.selected) {
+                    continue
+                }
+                anySelected = true;
+                const row = [...Array(9).keys()].map((i) => this.getCell(i, y));
+                const col = [...Array(9).keys()].map((i) => this.getCell(x, i));
+                const boxStartY = (~~(y/3)) * 3;
+                const boxStartX = (~~(x/3)) * 3;
+                const box = [0, 1, 2].flatMap(r => [0, 1, 2].map(c => ({"row": r + boxStartY, "column": c + boxStartX}))).map(s => this.getCell(s.column, s.row));
+                
+                stillAffected = stillAffected.filter(v => row.concat(col, box).includes(v));
+            }
+        }
+        if (!anySelected) {
+            return;
+        }
+        for (const cell of stillAffected) {
+            cell.affected = true;
+        }
     }
-    getCellSubgridByCoordinates(row, column) {
-        const subgridIndex = Math.floor(row / 3) * 3 + Math.floor(column / 3);
-        const inBoxIndex = (row % 3) * 3 + (column % 3);
-        return { subgridIndex, inBoxIndex };
-    }
-}
-
-const setCellValue = (cell, val) => {
-    cell.querySelector(".number-content").textContent = val;
-}
-
-const setCellStatus = (cell, statusStruct) => {
-    switch (statusStruct.modifiable) {
-        case true:
-            cell.classList.add("modifiable");
-            cell.classList.remove("unmodifiable");
-            break;
-        case false:
-            cell.classList.add("unmodifiable");
-            cell.classList.remove("modifiable");
-            break;
-        case undefined:
-            break;
-        default:
-            console.log("Error parsing modifiable");
-    }
-
 
 }
 

@@ -30,11 +30,11 @@ document.addEventListener('keyup', function (e) {
 document.addEventListener('keydown', function (e) {
     const inputNum = e.key;
     if (inputNum >= '1' && inputNum <= '9') {
-        sudokuboard.enterNumber(parseInt(inputNum));
+        sudokuboard.enterNumberToSelected(parseInt(inputNum));
         return;
     }
     if (inputNum == 'Backspace') {
-        sudokuboard.deleteNumber();
+        sudokuboard.deleteContentFromSelected();
     }
 });
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const buttons = controlPanel.querySelectorAll(".number-container button");
     for (const button of buttons) {
       button.addEventListener("click", () => {
-        sudokuboard.enterNumber(button.getAttribute("data-number"));
+        sudokuboard.enterNumberToSelected(button.getAttribute("data-number"));
       })
     }
     const newGameButton = document.getElementById("new-game");
