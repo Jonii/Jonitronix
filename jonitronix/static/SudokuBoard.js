@@ -13,6 +13,8 @@ export class SudokuBoard {
         
     }
 
+
+
     reset() {
         for (let x = 0; x<9; x++) {
             for (let y = 0; y<9; y++) {
@@ -92,21 +94,51 @@ export class SudokuBoard {
      */
     getCell(x, y) {
         const index = x + (y*9);
+        // @ts-ignore
         return this.htmlParent.children.item(index);
     }
 
     createBoardElement() {
         const boardElem = document.createElement("div");
         boardElem.id = "board";
+        /** @returns {Array<SudokuCell>} */
+        const emptySudokuCellArr = (v) => [];
+        const boxes = [...Array(9).keys()].map(emptySudokuCellArr);
+        const rows = [...Array(9).keys()].map(emptySudokuCellArr);
+        const columns = [...Array(9).keys()].map(emptySudokuCellArr);
 
         // Create 9 cells within each sub-grid
         for (let i = 0; i<81; i++) {
-            const cell = new SudokuCell();
+            const row = ~~(i/9);
+            const column = i%9;
+            const boxRow = ~~(row/3);
+            const boxCol = ~~(column/3);
+            const box = boxCol + (3 * boxRow);
 
+            const cell = new SudokuCell(i%9, ~~(i/9));
+            boxes[box].push(cell);
+            rows[row].push(cell);
+            columns[column].push(cell);
+            
             // Add click event listener
             cell.addEventListener('click', this.clickHandler(cell));
-
             boardElem.appendChild(cell);
+        }
+        for (const connectedCells of rows.concat(columns, boxes)) {
+            for (const cell of connectedCells) {
+                for (const connectedCell of connectedCells) {
+                    if (cell === connectedCell) {
+                        continue;
+                    }
+                    cell.addRelation(connectedCell, (a, b) => {
+                        if (a === null || b === null) {
+                            return true;
+                        }
+                        return (a !== b);
+                    })
+                }
+            }
+
         }
         return boardElem;
     }
@@ -117,6 +149,7 @@ export class SudokuBoard {
      * @returns 
      */
     enterNumberToSelected(num) {
+        /** @type {NodeListOf<SudokuCell>} */
         const selectedCells = this.htmlParent.querySelectorAll('sudoku-cell.modifiable.selected');
         console.log("inputting num " + num);
         if (selectedCells.length == 0) {
@@ -137,6 +170,7 @@ export class SudokuBoard {
     }
 
     deleteContentFromSelected() {
+        /** @type {NodeListOf<SudokuCell>}  */
         const selectedCells = this.htmlParent.querySelectorAll(".selected.modifiable");
         selectedCells.forEach((cell) => {
             cell.delNumber();
@@ -163,6 +197,7 @@ export class SudokuBoard {
         }
     }
     markAffectedBySelection() {
+        /** @type {NodeListOf<SudokuCell>} */
         const allCells = this.htmlParent.querySelectorAll("sudoku-cell");
         for (const cell of allCells) {
             cell.affected = false;
@@ -191,8 +226,39 @@ export class SudokuBoard {
             cell.affected = true;
         }
     }
+    verify() {
+        const allCells = this.allCells();
+        for (const cell of allCells) {
+            cell.illegal = false;
+            if (cell.checkRelations()) {
+                continue;
+            }
+            cell.illegal = true;
+        }
+    }
+    
+    /**
+     * 
+     * @returns {NodeListOf<SudokuCell>}
+     */
+    allCells() {
+        /** @type NodeListOf<SudokuCell> */ 
+        const all = this.htmlParent.querySelectorAll("sudoku-cell");
+        return all;
+    }
+
+    boxFor(cell) {
+        return this.htmlParent.querySelectorAll(`sudoku-cell.${cell.boxId}`);
+    }
+    rowFor(cell) {
+        return this.htmlParent.querySelectorAll(`sudoku-cell.${cell.rowId}`);
+    }
+    colFor(cell) {
+        return this.htmlParent.querySelectorAll(`sudoku-cell.${cell.colId}`);
+    }
 
 }
 
 
+// @ts-ignore
 window.SudokuBoard = SudokuBoard;

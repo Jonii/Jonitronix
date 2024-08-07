@@ -2,7 +2,7 @@
 
 export class SudokuCell extends HTMLElement {
 
-    constructor() {
+    constructor(column, row) {
         super();
         this.modifiable = true;
         this.selected = false;
@@ -12,7 +12,67 @@ export class SudokuCell extends HTMLElement {
                 <div class="number-content"></div>
             </div>
         `;
-        this.classList.add("cell", "modifiable");
+
+        this.relations = [];
+        this.observers = [];
+        this.violations = [];
+        this.row = row;
+        this.column = column;
+        const boxRow = (~~(row/3));
+        const boxCol = (~~(column/3));
+        this.rowId = `row-${row}`;
+        this.colId = `column-${column}`;
+        this.boxId = `box-${boxRow}-${boxCol}`;
+        this.classList.add("cell", "modifiable", this.rowId, this.colId, this.boxId);
+        const boxBorderToTheTop = (boxRow*3) === row && row>0;
+        const boxBorderToTheLeft = (boxCol*3) === column && column>0;
+        if (boxBorderToTheLeft) {
+            this.classList.add("box-border-left");
+        }
+        if (boxBorderToTheTop) {
+            this.classList.add("box-border-top");
+        }
+    }
+    /**
+     * 
+     * @param {SudokuCell} cell 
+     * @param {(a: number|null, b: number|null) => boolean} rel 
+     * Takes a cell which we depend on, and a relation.
+     * 
+     * Relation is a function that takes two numbers, and returns true if values are not contradictory,
+     * and false if the values are violating the contract.
+     */
+    addRelation(cell, rel) {
+        console.log("Added relation to cell");
+        const index = this.relations.length;
+        this.relations.push({cell, rel});
+        cell.registerObserver((newVal) => {
+            if (rel(this.number, newVal)) {
+                this.violations = this.violations.filter(v => v !== index);
+            }
+            else {
+                this.violations.push(index);
+            }
+            if (this.violations.length > 0) {
+                this.illegal = true;
+            }
+            else {
+                this.illegal = false;
+            }
+        });
+    }
+    checkRelations() {
+        this.violations = [];
+        for (const [index, {cell, rel}] of this.relations.entries()) {
+            if (rel(this.number, cell.number)) {
+                continue;
+            }
+            this.violations.push(index); 
+        }
+        return this.violations.length === 0;
+    }
+    registerObserver(fn) {
+        this.observers.push(fn);
     }
 
     connectedCallback() {
@@ -34,6 +94,15 @@ export class SudokuCell extends HTMLElement {
             return "notInRange";
         }
         this.number = num;
+        if (!this.checkRelations()) {
+            this.illegal = true;
+        }
+        else {
+            this.illegal = false;
+        }
+        for (const callback of this.observers) {
+            callback(num);
+        };
     }
 
     /**
@@ -48,6 +117,9 @@ export class SudokuCell extends HTMLElement {
             return "alreadyEmpty";
         }
         this.number = null;
+        for (const callback of this.observers) {
+            callback(null);
+        }
         return "deleted";
     }
     /**
@@ -122,6 +194,24 @@ export class SudokuCell extends HTMLElement {
             this.classList.remove("affected");
         }
     }
+ 
+    /**
+     * @returns {boolean}
+     */
+    get illegal() {
+        return this.classList.contains("illegal");
+    }
+    /**
+     * @param {boolean} a 
+     */
+    set illegal(a) {
+        if (a === true) {
+            this.classList.add("illegal");
+        }
+        if (a === false) {
+            this.classList.remove("illegal");
+        }
+    }   
 }
 
 customElements.define("sudoku-cell", SudokuCell);
