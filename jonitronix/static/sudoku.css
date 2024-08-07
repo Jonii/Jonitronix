@@ -25,7 +25,6 @@ button {
   grid-template-columns: 2fr 1fr;
   padding: 1rem 0rem;
   gap: 1rem;
-  outline: 1px solid black;
   width: fit-content;
 }
 
@@ -33,7 +32,7 @@ button {
     display: grid;
     width: fit-content;
     grid-template: repeat(9, 1fr) / repeat(9, 1fr);
-    border: 1px solid #222;
+    border: 2px solid #222;
   }
   .number-content, .number {
     -webkit-touch-callout: none;
@@ -57,37 +56,17 @@ button {
     margin-right: -1px;
     margin-bottom: -1px;
   }
-  .cell:nth-child(9n) {
+  .cell.box-border-left {
+    border-left: 1px solid #111;
+  }
+  .cell.box-border-top {
+    border-top: 1px solid #111;
+  }
+  .cell.row-8 {
+    margin-bottom: 0;
+  }
+  .cell.column-8 {
     margin-right: 0;
-  }
-  .cell:nth-child(27n-0),
-  .cell:nth-child(27n-1),
-  .cell:nth-child(27n-2),
-  .cell:nth-child(27n-3),
-  .cell:nth-child(27n-4),
-  .cell:nth-child(27n-5),
-  .cell:nth-child(27n-6),
-  .cell:nth-child(27n-7),
-  .cell:nth-child(27n-8) {
-    border-bottom: 1px solid #222;
-  }
-
-  .cell:nth-child(27n+1),
-  .cell:nth-child(27n+2),
-  .cell:nth-child(27n+3),
-  .cell:nth-child(27n+4),
-  .cell:nth-child(27n+5),
-  .cell:nth-child(27n+6),
-  .cell:nth-child(27n+7),
-  .cell:nth-child(27n+8),
-  .cell:nth-child(27n+9) {
-    border-top: 1px solid #222;
-  }
-  .cell:nth-child(3n) {
-    border-right: 1px solid #222;
-  }
-  .cell:nth-child(3n+1) {
-    border-left: 1px solid #222;
   }
   .cell-border {
     display: flex;
@@ -118,6 +97,9 @@ button {
 .cell.affected .cell-border {
     background-color: var(--affected-bg-color);
 }
+.cell.illegal {
+  color: red;
+}
 .number-content {
     font-size: var(--big-number-size);
     text-align: center;
@@ -129,26 +111,6 @@ button {
 .invalid .number-content {
     color: var(--invalid-text-color);
 }
-
-/**
-#controls {
-  outline: 1px solid black;
-  display: flex;
-  grid-column: 6 / 8;
-  grid-row: 2 / 5;
-  gap: 0.5rem;
-  flex-direction: column;
-}
-#controls .number-container {
-  display: grid;
-  aspect-ratio: 1;
-  grid-template-columns: repeat(3, 1fr);
-}
-#controls .number {
-  width: fit-content;
-  aspect-ratio: 1;
-  }
-  */
 
 #controls {
   width: fit-content;
