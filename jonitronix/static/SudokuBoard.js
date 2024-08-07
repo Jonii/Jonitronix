@@ -151,7 +151,7 @@ export class SudokuBoard {
     enterNumberToSelected(num) {
         /** @type {NodeListOf<SudokuCell>} */
         const selectedCells = this.htmlParent.querySelectorAll('sudoku-cell.modifiable.selected');
-        console.log("inputting num " + num);
+        console.log("inputting num " + num + typeof num);
         if (selectedCells.length == 0) {
             console.log("No cell selected");
             return;

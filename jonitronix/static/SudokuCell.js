@@ -140,6 +140,10 @@ export class SudokuCell extends HTMLElement {
             this.querySelector(".number-content").textContent = "";
             return;
         }
+        if (typeof num !== "number") {
+            console.log("Wrong datatype");
+            return;
+        }
         this.querySelector(".number-content").textContent = num;
     }
     /**

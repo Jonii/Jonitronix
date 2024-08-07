@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const buttons = controlPanel.querySelectorAll(".number-container button");
     for (const button of buttons) {
         button.addEventListener("click", () => {
-            sudokuboard.enterNumberToSelected(button.getAttribute("data-number"));
+            sudokuboard.enterNumberToSelected(parseInt(button.getAttribute("data-number")));
         })
     }
     const newGameButton = document.getElementById("new-game");
