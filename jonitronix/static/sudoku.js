@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
     newGameButton.addEventListener("click", () => {
         sudokuboard.reset();
     })
+    
+    const checkButton = document.getElementById("check");
+    checkButton.addEventListener("click", () => {
+        sudokuboard.verify();
+    });
+
     const selectModeBtn = document.getElementById("selectMode");
     console.log(selectModeBtn);
     const toggleSelectMode = () => {
