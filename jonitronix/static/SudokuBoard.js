@@ -98,6 +98,14 @@ export class SudokuBoard {
         return this.htmlParent.children.item(index);
     }
 
+    *iterValues() {
+        for (let x = 0; x<9; x++) {
+            for (let y = 0; y<9; y++) {
+                const cell = this.getCell(x, y);
+                yield [cell?.number, x, y];
+            }
+        }
+    }
     createBoardElement() {
         const boardElem = document.createElement("div");
         boardElem.id = "board";
