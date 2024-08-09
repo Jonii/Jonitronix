@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (result.success) {
             for (const [row, col, num] of result.mvHistory) {
                 console.log(`(${row}, ${col}): ${num}`);
-                sudokuboard.getCell(row, col).number = num;
+                sudokuboard.getCell(row, col).setNumber(num);
             }
         }
         else {

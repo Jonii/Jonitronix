@@ -113,10 +113,11 @@ export class SudokuCell extends HTMLElement {
         if (!this.modifiable) {
             return "unmodifiable";
         }
-        if (this.number === "") {
+        if (this.number === null) {
             return "alreadyEmpty";
         }
         this.number = null;
+        this.illegal = false;
         for (const callback of this.observers) {
             callback(null);
         }
