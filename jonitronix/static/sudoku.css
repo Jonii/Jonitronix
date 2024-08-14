@@ -139,3 +139,86 @@ button {
 #controls button {
   width: 100%;
 }
+
+#puzzle-select {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 80%;
+  height: 80%;
+  overflow: auto;
+  background-color: rgb(245, 147, 56);
+}
+#close-puzzle-select {
+  float: right;
+  margin: 1rem;
+}
+
+
+
+.cell-element {
+  --bg: var(--cell-bg-color);
+  border: solid 1px transparent;
+  border-left-color: #666;
+  border-left-style: dashed;
+  border-bottom-color: #666;
+  border-bottom-style: dashed;
+  display: flex;
+  flex-wrap: wrap;
+  width: 1.5em;
+  aspect-ratio: 1;
+  background-color: var(--bg);
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  
+}
+.cell-row-element:nth-child(3n+1) .cell-element {
+  border-left-color: black;
+  border-left-style: solid;
+}
+.cell-row-element:nth-child(3n) .cell-element {
+  border-right-color: transparent;
+}
+.cell-row-element:last-child .cell-element {
+  border-right-color: black;
+  border-right-style: solid;
+}
+.cell-element:nth-child(3n+1) {
+  border-top-color: black;
+  border-top-style: solid;
+}
+.cell-element:nth-child(3n) {
+  border-bottom-color: transparent;
+}
+.cell-element:last-child {
+  border-bottom-color: black;
+  border-bottom-style: solid;
+}
+.board-element {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  width: fit-content;
+  background-color: var(--cell-bg-color);
+}
+.cell-element.hover {
+  background-color: #111;
+}
+.cell-element.selected {
+  background-color: #1f1;
+}
+.cell-element.illegal {
+  color: red;
+}
+.cell-element .bottom-text {
+  font-size: 0.2rem;
+}
+.cell-element .big-number {
+  display: block;
+}
+
+board-element {
+  user-select: none;
+}
