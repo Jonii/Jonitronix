@@ -8,11 +8,11 @@ export class BoardElement extends HTMLElement {
         const rows = document.createElement("div");
         rows.classList.add("board-element");
         for (let i = 0; i < 9; i++) {
-            const newRow = document.createElement("div");
-            newRow.classList.add("cell-row-element");
+            const newCol = document.createElement("div");
+            newCol.classList.add("cell-row-element");
             for (let j = 0; j < 9; j++) {
                 const newCell = this.createCell(i, j);
-                newRow.appendChild(newCell);
+                newCol.appendChild(newCell);
                 this.cellArr[i][j] = newCell;
                 newCell.addEventListener("pointerenter", handleHover(this, i, j));
                 newCell.addEventListener("pointerleave", handleHoverLeave(this, i, j));
@@ -20,7 +20,7 @@ export class BoardElement extends HTMLElement {
                 newCell.addEventListener("pointerup", handlePointerUp(this, i, j));
                 newCell.addEventListener("pointercancel", handlePointerCancel(this, i, j));
             }
-            rows.appendChild(newRow);
+            rows.appendChild(newCol);
         }
         this.appendChild(rows);
     }
