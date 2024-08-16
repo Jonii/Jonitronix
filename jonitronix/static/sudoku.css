@@ -5,7 +5,7 @@
   --cell-border-zone-width: 30%;
   --big-number-size: 2rem;
   --affected-bg-color: #baa;
-  --selected-bg-color: #cbb;
+  --selected-bg-color: rgb(150, 143, 243);
   --invalid-text-color: red;
 }
 * {
@@ -173,6 +173,7 @@ button {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  position: relative;
   
 }
 .cell-row-element:nth-child(3n+1) .cell-element {
@@ -204,10 +205,30 @@ button {
   background-color: var(--cell-bg-color);
 }
 .cell-element.hover {
-  background-color: #111;
+    background-color: #dcc;
 }
-.cell-element.selected {
-  background-color: #1f1;
+.cell-element.selected::before,
+.cell-element.selected::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.cell-element.selected::before {
+  background-image: linear-gradient(to bottom right, rgb(0, 0, 0) 50%, transparent 50%),
+                    linear-gradient(to top right, rgb(0, 0, 0) 50%, transparent 50%);
+  background-position: top left, bottom left;
+  background-repeat: no-repeat;
+  background-size: 0.2em 0.2em;
+}
+.cell-element.selected::after {
+  background-image: linear-gradient(to bottom left, rgb(0, 0, 0) 50%, transparent 50%),
+                    linear-gradient(to top left, rgb(0, 0, 0) 50%, transparent 50%);
+  background-position: top right, bottom right;
+  background-repeat: no-repeat;
+  background-size: 0.2em 0.2em;
 }
 .cell-element.illegal {
   color: red;
@@ -217,6 +238,16 @@ button {
 }
 .cell-element .big-number {
   display: block;
+}
+.cell-element.immutable {
+  text-decoration: underline;
+  color: #444;
+}
+.cell-element.affected {
+  background-color: var(--affected-bg-color);
+}
+.cell-element.selected {
+  background-color: var(--selected-bg-color);
 }
 
 board-element {

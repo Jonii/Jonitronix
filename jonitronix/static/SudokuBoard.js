@@ -27,34 +27,35 @@ export class SudokuBoard {
         })
     }
     reset() {
-        this.htmlParent = new BoardElement();
         this.boardArray = new BoardArray();
         this.render();
     }
     setBoard(boardstring) {
-        this.boardArray = BoardArray.
+        this.boardArray = BoardArray.fromString(boardstring);
+        this.render();
     }
     deselectCell(x, y) {
-        this.htmlParent.getCell(x, y).classList.remove("selected");
         this.selected.remove(x, y);
+        this.render();
     }
     selectCell(x, y) {
-        this.htmlParent.getCell(x, y).classList.add("selected");
         this.selected.add(x, y);
+        this.render();
     }
     deselectAll() {
-        for (const {x, y} of this.selected.list) {
-            this.htmlParent.getCell(x, y).classList.remove("selected");
-        }
         this.selected = new CoordinateList();
+        this.render()
     }
     enterNumberToSelected(num) {
         let allTheNum = true;
         for (const {x, y} of this.selected.list) {
-            if (getCell(this.boardArray, y, x).content !== num) {
+            if (this.boardArray.getCell(x, y).other.immutable === true) {
+                continue;
+            }
+            if (this.boardArray.getCell(x, y).content !== num) {
                 allTheNum = false;
             }
-            this.boardArray = placeNumber(this.boardArray, y, x, num);
+            this.boardArray.placeVal(x, y, num);
         }
         if (allTheNum) {
             this.deleteContentFromSelected()
@@ -70,28 +71,65 @@ export class SudokuBoard {
      * @param {number} num 
      */
     enterNumber(x, y, num) {
-        this.boardArray = placeNumber(this.boardArray, y, x, num);
+        if (this.boardArray.getCell(x, y).other.immutable) {
+            return;
+        }
+        this.boardArray.placeVal(x, y, num);
         this.render()
     }
 
     deleteContentFromSelected() {
         console.log("Deleting!");
-        this.boardArray = deleteEntries(this.boardArray, ...this.selected.list);
+        for (const {x, y} of this.selected.list) {
+            if (this.boardArray.getCell(x, y).other.immutable) {
+                continue;
+            }
+            this.boardArray.placeVal(x, y, null);
+        }
         this.render();
 
     }
     render() {
         console.log("Render called");
-        for (const [cell, row, col, box] of iterateCells(this.boardArray)) {
+        for (const [cell, row, col, box] of this.boardArray.iterateCells()) {
             const htmlCell = this.htmlParent.getCell(col, row);
-            if (cell.content && !cell.possibleValues.some(v => v === cell.content)) {
+            if (cell.content && cell.seenCount[cell.content] > 0) {
                 htmlCell.classList.add("illegal");
             }
             else {
                 htmlCell.classList.remove("illegal");
             }
+            if (cell.other.immutable) {
+                htmlCell.classList.add("immutable");
+            }
+            else {
+                htmlCell.classList.remove("immutable");
+            }
+            
+            htmlCell.classList.remove("affected");
+            const cellCoords = { "x": col, "y": row };
+            for (const selectedCell of this.selected.list) {
+                if (!this.boardArray.cellsSeeEachOther(cellCoords, selectedCell) && !(selectedCell.x === col && selectedCell.y === row)) {
+                    htmlCell.classList.remove("affected");
+                    break;
+                }
+                htmlCell.classList.add("affected");
+            }
             this.htmlParent.setCellVal(col, row, cell.content);
-            htmlCell.children[1].textContent = JSON.stringify(cell.possibleValues);
+            //htmlCell.children[1].textContent = JSON.stringify(cell.seenCount);
+            if (this.selected.list.find(s => s.x === col && s.y === row)) {
+                htmlCell.classList.add("selected");
+            }
+            else {
+                htmlCell.classList.remove("selected");
+            }
+        }
+    }
+    *iterValues() {
+        for (let x = 0; x<9; x++) {
+            for (let y = 0; y<9; y++) {
+                yield [this.boardArray.getCell(x, y).content, x, y];
+            }
         }
     }
 }

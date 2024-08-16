@@ -30,11 +30,6 @@ const cellsMustBeDifferent = (x1, y1, x2, y2) => {
 }
 
 /**
- * @typedef {{content: number, possibleValues: Array<number>, other: {}}} SudokuArrayCell
- * @typedef {Array<Array<SudokuArrayCell>>} SudokuArray
- */
-
-/**
  * 
  * @param {SudokuArray} board 
  * @param {number} row 
@@ -73,7 +68,7 @@ export const getCell = (board, row, col) => {
 export const deleteEntries = (board, ...coordinates) => {
     console.log(JSON.stringify(coordinates));
     let newBoard = createBoardArray();
-    for (const [cell, row, col, box] of iterateCells(board)) {
+    for (const [cell, row, col] of iterateCells(board)) {
         if (coordinates.some(s => s.x === col && s.y === row)) {
             continue;
         }
@@ -97,7 +92,7 @@ export const createBoardArray = () => {
     const boardArr = [...Array(9)].map(() => [...Array(9)].map(() => ({
         "content": null, 
         "possibleValues": [...Array(9)].map((_, index) => index+1),
-        "other": {}
+        "other": {immutable: false}
     })));
     return boardArr
 }
@@ -122,7 +117,7 @@ export const iterateSolve = (board, mvHistory, calldepth = 1) => {
     let shortestRow = -1;
     let shortestCol = -1;
     let shortest = null;
-    for (const [cellVal, row, col, box] of iterateCells(board)) {
+    for (const [cellVal, row, col] of iterateCells(board)) {
         if (cellVal.possibleValues.length === 0) {
             return {"success": false};
         }
@@ -181,40 +176,40 @@ export const boardStringToArr = (boardString) => {
 
 
 
-export class BoardArr {
+export class BoardArray {
     constructor() {
         this.arr = [...Array(9)].map(() => [...Array(9)].map(() => ({
             "content": null, 
-            "seenCount": [...Array(9)].map(v => 0),
+            "seenCount": [...Array(10)].map(() => 0),
             "other": {}
         })));
     }
-    placeVal(x, y, num) {
-        if (this.arr[x][y].content !== null) {
-            this.decreaseCounts(x, y, this.arr[x][y].content);
+    placeVal(x, y, num, kwargs) {
+        console.log(`Placing val ${num} to ${x}, ${y}`);
+        if (this.getCell(x, y).content !== null) {
+            this.decreaseCounts(x, y, this.getCell(x, y).content);
         }
-        if ([1, 2, 3, 4, 5, 6, 7, 8, 9].findIndex(num) !== -1) {
+        if ([1, 2, 3, 4, 5, 6, 7, 8, 9].findIndex(v => v === num) !== -1) {
             this.increaseCounts(x, y, num);
-            this.arr[x][y].content = num;
+            this.getCell(x, y).content = num;
+            if (kwargs?.immutable) {
+                this.getCell(x, y).other.immutable = true;
+            }
             return;
         }
-        this.arr[x][y].content = null;
+        this.getCell(x, y).content = null;
     }
-    decreaseCounts(x, y, num) {
-        for (const [j, row] of this.arr.entries()) {
-            for (const [i, cell] of row) {
-                if (this.cellsSeeEachOther({x, y}, {"x": i, "y": j})) {
-                    cell.seenCount[num] = cell.seenCount[num] - 1;
-                }
+    decreaseCounts(x, y, num) {  
+        for (const [cell, y0, x0] of this.iterateCells()) {
+            if (this.cellsSeeEachOther({x, y}, {"x": x0, "y": y0})) {
+                cell.seenCount[num] = cell.seenCount[num] - 1;
             }
         }
     }
     increaseCounts(x, y, num) {
-        for (const [j, row] of this.arr.entries()) {
-            for (const [i, cell] of row) {
-                if (this.cellsSeeEachOther({x, y}, {"x": i, "y": j})) {
-                    cell.seenCount[num] = cell.seenCount[num] + 1;
-                }
+        for (const [cell, y0, x0] of this.iterateCells()) {
+            if (this.cellsSeeEachOther({x, y}, {"x": x0, "y": y0})) {
+                cell.seenCount[num] = cell.seenCount[num] + 1;
             }
         }
     }
@@ -241,8 +236,22 @@ export class BoardArr {
         return false;
     }
 
+    getCell(x, y) {
+        return this.arr[y][x];
+    }
+
+    *iterateCells() {
+        for (const [y, row] of this.arr.entries()) {
+            for (const [x, cell] of row.entries()) {
+                const boxRow = ~~(y/3);
+                const boxCol = ~~(x/3);
+                yield [cell, y, x, boxRow * 3 + boxCol];
+            }
+        }
+    }
+
     static fromString(boardstring) {
-        const newArr = new BoardArr();
+        const newArr = new BoardArray();
         const lines = boardstring.split("\n").map((s) => s.trim()).filter((s) => s.length >= 9);
         if (lines.length !== 9) {
             return newArr;
@@ -257,7 +266,7 @@ export class BoardArr {
                     symbol = token.charAt(1);
                 }
                 if (symbol <= "9" && symbol >= "1") {
-                    newArr.placeVal(colInd, rowInd, parseInt(symbol));
+                    newArr.placeVal(colInd, rowInd, parseInt(symbol), {immutable: constant});
                     continue;
                 }
                 if (symbol === "_") {
@@ -265,7 +274,7 @@ export class BoardArr {
                 }
             }
         }
- 
+        return newArr;
     }
 
 

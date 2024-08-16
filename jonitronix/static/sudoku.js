@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const result = iterateSolve(boardArr, []);
         if (result.success) {
-            for (const [row, col, num] of result.mvHistory) {
-                sudokuboard.getCell(row, col).setNumber(num);
+            for (const [x, y, num] of result.mvHistory) {
+                sudokuboard.enterNumber(x, y, num);
             }
         }
         else {
