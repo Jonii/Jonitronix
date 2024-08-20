@@ -6,7 +6,7 @@ draft = false
 
 {{< linkedinbadge username="joni-hanski" name="Joni Hanski" >}}
 
-I'm Joni Hanski, software developer, mathematician, AI and data science enthusiast, living in Finland. This page is basically a container for multiple interests of mine, hobby projects, blog that's written for both myself, and the occasional recruiter who I'll be directing to check out this site to see what they'd be hiring. If you are here for some other reason, do send me a message. I'd love to hear your story.
+I'm Joni Hanski, software developer, mathematician, AI and data science enthusiast from Finland, currently living in Poznan, Poland. This page serves mostly as a tool for job hunting, and overall an experiment on establishing internet presence. I also plan on publishing here interesting recruiter-friendly hobby projects.
 
 This site started its journey 7th of September, 2023.
 
