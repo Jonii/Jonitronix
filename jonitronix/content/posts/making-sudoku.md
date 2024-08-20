@@ -56,7 +56,7 @@ for cell of cells:
 
 This worked fine for a solver, but turns out, this was not workable for using it as a data model for the normal game. The reason was somewhat surprising to me at the time: You can't handle deletion of numbers too well. If a cell with "5" as value gets its value deleted(or changed), you cannot go and add this 5 to each number it sees, because those cells might see another 5.
 
-The solution to this ended up being really simple: Just keep track of how many occurences of each number the cell sees. So a simple seenCount array, with 9 values. So if you change value of cell from 4 to 6, you'd deduct from the count of 4's seen 1, and add 1 to count of 6's seen, for all cells this cell sees. The logic of `possibleValues.contains(6)` ends up mapping to simple `seenCount[6] == 0`.
+The solution to this ended up being really simple: Just keep track of how many occurences of each number the cell sees. So a simple seenCount array, with 9 values. So if you change value of cell from 4 to 6, you'd deduct from the count of 4's seen 1, and add 1 to count of 6's seen, for all cells this cell sees. The logic of ```possibleValues.contains(6)``` ends up mapping to simple ```seenCount[6] == 0```.
 
 ## Lessons learned
 
