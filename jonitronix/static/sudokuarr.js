@@ -255,6 +255,11 @@ export class BoardArray {
         return this.arr[y][x];
     }
 
+    /**
+     * @yields {[cell; {}, row: number, column: number, boxNumber: number]}
+     * 
+     * Iterates cells returning the cell data, y, x, and boxnumber for each cell in the array.
+     */
     *iterateCells() {
         for (const [y, row] of this.arr.entries()) {
             for (const [x, cell] of row.entries()) {

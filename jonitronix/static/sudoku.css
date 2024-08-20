@@ -110,7 +110,7 @@ button {
   flex-grow: 0;
 }
 #puzzle-select-content > label {
-  font-size: 0.5rem;
+  font-size: 0.8rem;
   margin: 1rem;
 }
 #puzzle-select-content > label > input:checked + * {

@@ -1,7 +1,7 @@
 "use strict";
 import { BoardElement } from './BoardElement.js';
 import { SudokuBoard } from './SudokuBoard.js';
-import { createBoardArray, iterateSolve, placeNumber } from './sudokuarr.js';
+import { createBoardArray, iterateSolve, placeNumber, BoardArray } from './sudokuarr.js';
 
 const sudokuboard = new SudokuBoard();
 const board1 = `
@@ -64,9 +64,13 @@ document.addEventListener('DOMContentLoaded', function () {
         puzzleSelectModal.classList.add("active");
         const puzzleSelection = document.getElementById("puzzle-select-content");
         puzzleSelection.replaceChildren();
-        const puzzleStrings = ["", "", "", ""];
+        const puzzleStrings = [board1, board2];
         for (const s of puzzleStrings) {
             const puzzlePreview1 = new BoardElement();
+            const arr = BoardArray.fromString(s);
+            for (const [cell, y, x, boxnum] of arr.iterateCells()) {
+                puzzlePreview1.setCellVal(x, y, cell.content);
+            }
             const label = document.createElement("label");
             const checkbox = document.createElement("input");
             checkbox.type = "radio";
@@ -82,6 +86,18 @@ document.addEventListener('DOMContentLoaded', function () {
     closePuzzleSelectModalBtn.addEventListener("click", () => {
         puzzleSelectModal.classList.remove("active");
     });
+    const loadPuzzleBtn = document.getElementById("select-load");
+    loadPuzzleBtn.addEventListener("click", () => {
+        const puzzleChoices = document.getElementsByName("puzzle-select-group");
+        for (const puzzleChoice of puzzleChoices) {
+            if (puzzleChoice.checked) {
+                sudokuboard.reset();
+                sudokuboard.setBoard(puzzleChoice.value);
+                puzzleSelectModal.classList.remove("active");
+                break;
+            }
+        }
+    })
     
     const selectModeBtn = document.getElementById("selectMode");
     console.log(selectModeBtn);
@@ -137,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         resultCount.textContent = `Total solutions: ${result.solutions}${result.solutions === maxSolutions ? "+" : ""}`;
     });
+
 
 
     selectModeBtn.addEventListener("click", (ev) => {
