@@ -33,14 +33,12 @@ export class BoardElement extends HTMLElement {
     createCell(x, y) {
         const el = document.createElement("div");
         el.classList.add("cell-element");
-        el.style.fontSize = "2rem";
         const number = document.createElement("span");
         number.classList.add("big-number")
         el.appendChild(number);
         const bottomText = document.createElement("span");
         bottomText.classList.add("bottom-text");
         el.appendChild(bottomText);
-        bottomText.style.fontSize = "0.3rem";
         return el;
     }
     setCellVal(x, y, val) {

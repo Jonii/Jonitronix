@@ -21,8 +21,7 @@ button {
 }
 
 #sudoku-container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
   padding: 1rem 0rem;
   gap: 1rem;
   width: fit-content;
@@ -34,90 +33,17 @@ button {
     grid-template: repeat(9, 1fr) / repeat(9, 1fr);
     border: 2px solid #222;
   }
-  .number-content, .number {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-  }
-  
-  .cell {
-    width: var(--cell-min-size);
-    height: var(--cell-min-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dotted var(--cell-border-color);
-    background-color: var(--cell-bg-color);
-    box-sizing: border-box;
-    margin-right: -1px;
-    margin-bottom: -1px;
-  }
-  .cell.box-border-left {
-    border-left: 1px solid #111;
-  }
-  .cell.box-border-top {
-    border-top: 1px solid #111;
-  }
-  .cell.row-8 {
-    margin-bottom: 0;
-  }
-  .cell.column-8 {
-    margin-right: 0;
-  }
-  .cell-border {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: var(--cell-border-zone-width);
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .cell:hover {
-    background-color: #dcc;
-    border-color: #111;
-  }
-  .cell.affected {
-    background-color: var(--affected-bg-color);
-  }
-  .cell.selected .number-content {
-    background-color: var(--selected-bg-color);
-  }
-  .cell.selected {
-    border: 2px dashed #222;
-  }
-
-.cell.affected .cell-border {
-    background-color: var(--affected-bg-color);
-}
-.cell.illegal {
-  color: red;
-}
-.number-content {
-    font-size: var(--big-number-size);
-    text-align: center;
-    border: none;
-}
-.unmodifiable .number-content {
-  color: #444;
-}
-.invalid .number-content {
-    color: var(--invalid-text-color);
-}
 
 #controls {
-  width: fit-content;
+  display: flex;
+  flex-wrap: wrap;
+  width: 20rem;
 }
 
 #controls .number-container {
   display: grid;
+  width: 20rem;
+  height: 20rem;
   grid-template-columns: repeat(3, 1fr);
 }
   
@@ -125,6 +51,7 @@ button {
   border: 5px outset #888;
   background-color: #777;
   aspect-ratio: 1;
+  width: 100%;
   align-items: center;
   justify-content: center;
 }
@@ -146,18 +73,54 @@ button {
   z-index: 1;
   left: 0;
   top: 0;
-  width: 80%;
-  height: 80%;
+  width: fit-content;
+  min-width: 50%;
+  margin: 1rem;
+  outline: 2px solid #444;
+  height: fit-content;
+  max-height: 60%;
+  min-height: 25rem;
   overflow: auto;
   background-color: rgb(245, 147, 56);
 }
+#puzzle-select.active {
+  display: block;
+}
+#puzzle-select > .select-header {
+  background-color: #555;
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.1em dotted #777;
+}
+#puzzle-select-content {
+  background-color: #bbb;
+  margin: 2rem;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 15rem;
+}
+.select-header > * {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
 #close-puzzle-select {
-  float: right;
+  flex-shrink: 1;
+  flex-grow: 0;
+}
+#puzzle-select-content > label {
+  font-size: 0.5rem;
   margin: 1rem;
 }
+#puzzle-select-content > label > input:checked + * {
+  outline: 10px solid black;
+  outline-offset: 1px;
+}
 
-
-
+#sudoku-container .cell-element {
+  font-size: 2rem;
+}
 .cell-element {
   --bg: var(--cell-bg-color);
   border: solid 1px transparent;
@@ -173,8 +136,7 @@ button {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  position: relative;
-  
+  position: relative; 
 }
 .cell-row-element:nth-child(3n+1) .cell-element {
   border-left-color: black;
@@ -252,4 +214,5 @@ button {
 
 board-element {
   user-select: none;
+  width: fit-content;
 }

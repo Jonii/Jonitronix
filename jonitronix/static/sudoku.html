@@ -28,12 +28,22 @@
             <div class="controls-container">
                 <button id="new-game">Choose game</button>
                 <button id="solve">Solve</button>
+                <progress id="solve-progress" min="0" max="100"></progress>
+                <span id="solve-count"></span>
             </div>
         </div>
     </div>
     <div id="puzzle-select" class="puzzle-select">
-        <div id="puzzle-select-content" class="puzzle-select-content">
+        <div id="select-header" class="select-header">
+            <div>
+                Select a puzzle to load
+            </div>
             <button id="close-puzzle-select" class="close-puzzle-select">&times;</button>
+        </div>
+        <div id="puzzle-select-content" class="puzzle-select-content">
+        </div>
+        <div id="select-footer" class="select-footer">
+            <button id="select-load" class="select-load">Load puzzle</button>
         </div>
     </div>
     <div id="other"></div>

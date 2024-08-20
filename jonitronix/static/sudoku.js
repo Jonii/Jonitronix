@@ -4,7 +4,7 @@ import { SudokuBoard } from './SudokuBoard.js';
 import { createBoardArray, iterateSolve, placeNumber } from './sudokuarr.js';
 
 const sudokuboard = new SudokuBoard();
-sudokuboard.setBoard(`
+const board1 = `
   _ _ _ | _ _ _ | _ _ _
   _ _ _ | _ _ _ | _ _ _
   _ #3 _| _ 2 1 | _ _ _
@@ -16,7 +16,22 @@ sudokuboard.setBoard(`
   _ _ _ | _ _ _ | _ _ _
   _ _ _ | _ _ _ | _ _ _
   _ _ _ | _ _ _ | _ _ _
-  `)
+  `;
+
+const board2 = `
+  _  _  _|  _  _  _ |  _  _  _
+  _  _  _|  _  _  _ |  _  _  _
+  _  _ #4|  _  _  _ |  _  _  _
+
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ #3 2 | _ _ _
+  _ _ _ | _ #8 #9 | _ _ _
+
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
+  _ _ _ | _ _ _ | _ _ _
+  `;
+sudokuboard.setBoard(board1)
 
 
 
@@ -44,9 +59,29 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
     const newGameButton = document.getElementById("new-game");
+    const puzzleSelectModal = document.getElementById("puzzle-select");
     newGameButton.addEventListener("click", () => {
-        sudokuboard.reset();
+        puzzleSelectModal.classList.add("active");
+        const puzzleSelection = document.getElementById("puzzle-select-content");
+        puzzleSelection.replaceChildren();
+        const puzzleStrings = ["", "", "", ""];
+        for (const s of puzzleStrings) {
+            const puzzlePreview1 = new BoardElement();
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "radio";
+            checkbox.name = `puzzle-select-group`;
+            checkbox.value = s;
+            checkbox.hidden = true;
+            label.appendChild(checkbox);
+            label.appendChild(puzzlePreview1);
+            puzzleSelection.appendChild(label);
+        }
     })
+    const closePuzzleSelectModalBtn = document.getElementById("close-puzzle-select");
+    closePuzzleSelectModalBtn.addEventListener("click", () => {
+        puzzleSelectModal.classList.remove("active");
+    });
     
     const selectModeBtn = document.getElementById("selectMode");
     console.log(selectModeBtn);
@@ -77,7 +112,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     const solveBtn = document.getElementById("solve");
-    solveBtn.addEventListener("click", (ev) => {
+    solveBtn.addEventListener("click", async (ev) => {
+        const resultCount = document.getElementById("solve-count");
+        resultCount.textContent = "";
+        
+        const maxSolutions = 100;
+
+        await new Promise(resolve => setTimeout(resolve, 10));
         let boardArr = createBoardArray();
         
         for (const [val, x, y] of sudokuboard.iterValues()) {
@@ -85,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 boardArr = placeNumber(boardArr, x, y, val);
             }
         }
-        const result = iterateSolve(boardArr, []);
+        const result = await iterateSolve(boardArr, [], document.getElementById("solve-progress"), 0, 100, maxSolutions);
         if (result.success) {
             for (const [x, y, num] of result.mvHistory) {
                 sudokuboard.enterNumber(x, y, num);
@@ -94,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else {
             console.log("Not solvable!!!!");
         }
+        resultCount.textContent = `Total solutions: ${result.solutions}${result.solutions === maxSolutions ? "+" : ""}`;
     });
 
 

@@ -111,15 +111,14 @@ export function* iterateCells(board) {
         }
     }
 }
-export const iterateSolve = (board, mvHistory, calldepth = 1) => {
-    console.log(`Call depth: ${calldepth}`);
+export const iterateSolve = async (board, mvHistory, progressElement = undefined, start=0, end=0, maxSolutions=1000) => {
     let shortestLength = 1000;
     let shortestRow = -1;
     let shortestCol = -1;
     let shortest = null;
     for (const [cellVal, row, col] of iterateCells(board)) {
         if (cellVal.possibleValues.length === 0) {
-            return {"success": false};
+            return {"success": false, "solutions": 0};
         }
         if (cellVal.content !== null) {
             continue;
@@ -132,18 +131,34 @@ export const iterateSolve = (board, mvHistory, calldepth = 1) => {
         }
     }
     if (shortest === null) {
-        return {"success": true, "mvHistory": mvHistory}
+        return {"success": true, "mvHistory": mvHistory, solutions: 1}
     }
-    for (const num of shortest.possibleValues) {
+    let returnedResult = {"success": false, "solutions": 0}
+    console.log(`maxSolutions: ${maxSolutions}`);
+    for (const [i, num] of shortest.possibleValues.entries()) {
         //console.log(`Row: ${shortestRow}, Col: ${shortestCol}, Val: ${shortest}`);
         const newBoard = placeNumber(board, shortestRow, shortestCol, num);
         const newMvHistory = [...mvHistory, [shortestRow, shortestCol, num]];
-        const result = iterateSolve(newBoard, newMvHistory, calldepth + 1);
+        const stepSize = (end-start) / shortest.possibleValues.length;
+        const currentProgress = start + (stepSize * i);
+        const result = await iterateSolve(newBoard, newMvHistory, progressElement, start=currentProgress, end=currentProgress + stepSize, maxSolutions=maxSolutions-returnedResult.solutions);
+        if (stepSize > 0.5) {
+            console.log(`updating progress element to ${currentProgress + stepSize}(stepsize: ${stepSize})`);
+            progressElement.value = currentProgress + stepSize;
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
         if (result.success) {
-            return result;
+            result.solutions = returnedResult.solutions + result.solutions;
+            returnedResult.solutions = result.solutions;
+        }
+        if (!returnedResult.success) {
+            returnedResult = result;
+        }
+        if (returnedResult.solutions >= maxSolutions) {
+            return returnedResult;
         }
     }
-    return {"success": false};
+    return returnedResult;
 }
 
 export const boardStringToArr = (boardString) => {
